@@ -1,3 +1,7 @@
+# 1. 开始
+
+> 虚拟机集群的步骤看ppt
+
 - type(类似 which)
   - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
   - 外部命令都可以通过`man 命令名称`查看文档
@@ -28,8 +32,12 @@
   - 0 输入流
   - 1 正确的输出流
   - 2 错误的输出流
-- 目录
 
+----
+
+# 2. 目录相关
+
+- 目录
   - /boot:系统启动相关文件
   - /etc:配置文件
   - /home:存放除 root 用户外的用户目录
@@ -67,7 +75,6 @@
 - hash:存储执行过的命令，提高下一次命令查找速度
   - hash -r 清除
 - 文件系统命令：
-
   - df
   - du
   - ls
@@ -111,7 +118,6 @@
 - tail 显示最后面的内容，-4 表示显示四行
   > head -4 file | tail -1 显示第四行
 - 管道：
-
   - cat file | more 可以分屏显示内容
   - echo "/" | ls -l **不会显示根目录文件夹**
     > 每个程序都有输入流，但不一定会用到。比如 ls，只会判定传入的参数，而并没有读取输入流
@@ -136,6 +142,10 @@
     - `def\>` 以 def 结尾的单词
     - `\<word\>` word 单词。注意，这样查到的`$word` `word.`也是符合的
 
+----
+
+# 3. 文本处理
+
 * cut：切割行。比如查看数据库表数据时
 
   - f:选择显示的列
@@ -158,7 +168,6 @@
   - f:忽略大小写
 
 * wc:统计。linw，word，bytes
-
   - l:只统计行数
   - 通常统计后面会有文件名，通过 cat file | wc -l 可以统计行数而不带文件名
   - 其他统计用 man 查一下吧
@@ -204,11 +213,11 @@
   - 使用：
     - awk -F '{pattern + action}' {filenames}
       > **必须是单引号**
-    - 支持自定义分隔符
+    - 支持自定义分隔符.默认为空格
     - 支持正则表达式匹配
     - 支持自定义变量，数组  a[1]  a[tom]  map(key)
     - 支持内置变量
-      - NF                 浏览记录的域的个数
+      - NF                 浏览记录的域(列)的个数
       - NR                 已读的记录数(行数)
       - ARGC               命令行参数个数
       - ARGV               命令行参数排列
@@ -234,7 +243,8 @@
     - `awk -F':' '{print NR"\t"NF"\t"$0}'`打印每行行号，列数，完成内容，为一个表格
     - 计算合计工资
       ```
-      统计报表：合计每人1月工资，0：manager，1：worker
+      统计报表：合计每人1月的工资，0：manager，1：worker
+
       Tom	 0   2012-12-11      car     3000
       John	 1   2013-01-13      bike    1000
       vivi	 1   2013-01-18      car     2800
@@ -242,6 +252,24 @@
       John	 1   2013-01-28      bike    3500
 
       结果比如: tom worker 2500
+
+      awk '{
+        split($3,date,"-");
+        if(date[2]=="01"){
+          name[$1] += $5
+          if($2=="0"){
+            position[$1] = "manager"
+          }else if($2=="1"){
+            position[$1] = "worker"
+          }
+        }
+      }
+      END{
+          for(i in name){
+            print i "\t" position[i] "\t" name[i]
+          }
+      }' wagetable.txt
+      
 
       ```
 
@@ -261,3 +289,195 @@
   - 一行是一个用户的信息
   - 用户名:x:用户id号:组id号:用户描述信息:用户家目录:用户以交互模式登录时的shell外壳程序
     > 原本加密后的密码是保存在x那里的，但因为不安全，所以移除了，x用来占位
+
+
+----
+
+# 4. 用户和权限
+
+> 了解逻辑，以后工作后要知道自己想要什么权限的用户。或者哪个程序的管理员，哪个程序的普通用户
+
+- x权限
+  - x对目录是打开权限
+  - 对文件是运行权限
+  - 文件默认不给x
+- useradd   添加用户
+- passwd:普通用户可以修改自己密码，只有root用户能修改别人密码
+- users:查看当前登录用户
+- id username 查看用户id信息
+- su 切换用户 switch user
+- groupadd 创建组
+- usermod 修改用户元数据
+  - a 增加
+  - G 组
+- chown 修改持有者和组 chown -R mysqladmin:mysqlgroup /otp/mysql
+- chmod 修改用户，组权限
+- 两个用户间user1,user1间交互部分数据：  
+  > 先创建好用户和组，再分配权限
+  - 创建 mkdir /share
+  - 创建一个组   
+    - groupadd user12share
+  - user1.user2加入同一个组 
+    - usermod -a -G user12share user01
+    - usermod -a -G user12share user02
+  - 给够组的权限
+    - chown root:user12share /share
+      > change owner 让用户root和组user12share持有
+    - chmod g+w /share
+      > ugo user,group,other
+  - 减掉其他人的权限
+    - chmod o-rx /share
+  - **重新登录，刷新权限**
+  - 注意，文件夹中新创建文件会采用默认权限，父级目录只会约束哪几个用户进来，必要时可以对文件进行权限修改或者修改组
+
+- 管理员：
+  - 操作系统管理员只有一个；root
+  - 如果有能够访问和运行某程序管理程序的的权限，就是某程序的管理员，比如mysql管理员
+  - 权限更新后一定要重新登录
+
+
+----
+
+# 5. 软件安装
+
+- 编译安装(自己编译安装)
+  - 说明：
+    > 服务器要求稳定性。而软件越大，bug的风险越高。同时软件开发更多趋向于模块化，所以可以在编译期剔除一些模块，个性化得得到一个软件
+    - 配置文件：Makefile
+    - 编译安装命令：make（会自动查找编译器）
+  - 安装tengine
+    - 阅读README查看安装步骤
+      ```
+      To install Tengine, just follow these three steps:
+      $ ./configure
+      $ make
+      # make install
+      ```
+    - ./configure --help 查看安装选项
+      > 可以通过安装选项选择关闭模块，安装位置等
+    - ./configure --prefix="/opt/learn/nginx"  （安装选项prefix是安装目录）
+    - 开始安装，看输出报错，是否缺少依赖。缺少的话就装下，不断解决依赖问题
+    - 创建MakeFile文件创建完成（读读看，其实会内容会读取objs/Makefile）
+    - make  (默认读取Makefile文件)(是在进行编译)
+    - make install（这一步是安装，将编译后的文件拷贝到目标文件夹）
+    - /opt/learn/nginx下会出现软件目录
+    - /opt/learn/nginx/sbin下有启动程序
+    - 启动后可以在windows上访问
+- rpm安装:包(编译后的包)
+  > 有些软件不在仓库中。比如jvm，一个oracle的，一个openjdk，还有其他。仓库中安装的是openjdk <br>
+  > 但不能自动安装依赖
+  - 安装：
+    - rpm  -i filename.rpm  (-i 表示 --install )
+  - 查询：
+    - rpm -qa 查询所有安装的软件的包的名称（不显示编译安装的） ※
+    - rpm -ql 包名  显示包rpm -qa : 查询已经安装的包 ※
+    - rpm -qf /path/to/somefile: 查询文件是由哪个rpm包安装生成的(逆向查询)	※
+      > 原理：安装时会讲包名和安装文件目录存到数据库中，所以尽管文件被删除了也没问题
+    - rpm -q  PACKAGE_NAME: 查询指定的包是否已经安装
+    - rpm -qi PACKAGE_NAME: 查询指定包的说明信息
+    - rpm -qc PACEAGE_NEME：查询指定包安装的配置文件
+    - rpm -qd PACKAGE_NAME: 查询指定包安装的帮助文件
+    - rpm -q --scripts PACKAGE_NAME: 查询指定包中包含的脚本	
+    - 如果某rpm包尚未安装，需查询其说明信息、安装以后会生成的文件
+      - rpm -qpi /PATH/TO/PACKAGE_FILE
+      - rpm -qpl 释放了哪些文件到哪里
+  - 升级：
+    - -U
+    - -F
+  - 卸载:
+    - -e PACKAGE_NAME
+  - 设置环境变量
+    - 安装完软件后也会自动在$PATH中默认目录下添加一些软链接（注意，不是全部），为了解决问题可以添加环境变量
+      ```
+      # 安装完jdk后
+      [root@node0001 bin]# ll | grep java
+      lrwxrwxrwx  1 root root        25 Aug 19 23:38 jar -> /usr/java/default/bin/jar
+      lrwxrwxrwx  1 root root        26 Aug 19 23:38 java -> /usr/java/default/bin/java
+      lrwxrwxrwx  1 root root        27 Aug 19 23:38 javac -> /usr/java/default/bin/javac
+      lrwxrwxrwx  1 root root        29 Aug 19 23:38 javadoc -> /usr/java/default/bin/javadoc
+      lrwxrwxrwx  1 root root        28 Aug 19 23:38 javaws -> /usr/java/default/bin/javaws
+      lrwxrwxrwx  1 root root        30 Aug 19 23:38 jcontrol -> /usr/java/default/bin/jcontrol
+      ```
+    - 添加环境变量：`\etc\profile`
+      ```profile
+      # 最后添加
+      export JAVA_HOME=/usr/java/jdk1.7.0_67
+      export PATH=$PATH:$JAVA_HOME/bin   # 拼接PATH
+      ```
+    - 更新配置  `source /etc/profile` 
+
+- yum安装:仓库
+  > 会自动安装依赖。底层会调用rpm。只是rpm的一种封装
+  - 原理：
+    - 基于rpm包管理
+    - 提供rpm仓库。组成：
+      - rpm包
+      - 元数据描述文件
+  - 流程：
+    - 元数据下载到本地
+    - 推断依赖包，包名，版本号等
+    - 安装依赖包和目的包
+  - repo配置`/etc/yum.repos.d/`：
+    - 配置文件说明：；
+      - Centos-Base.repo
+        ```
+        [base]  # 仓库名称,可以有多个仓库
+        name=CentOS-$releasever - Base  # 逻辑描述，怎么都行
+        mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os  # 该地址可以动态返回最近的仓库地址,不用改
+        # 发现在什么东西都没改时，会动态使用aliyun
+
+        # baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/  # 仓库位置。也支持 ftp,file协议
+        # 下面的是安全认证，不用管
+        gpgcheck=1
+        gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+        ```
+    - 国内镜像站配置
+      - 可以根据镜像站说明配置镜像源
+      - 配置完成后，：
+        - yum clean all 清除元数据
+        - yum makecache 下载元数据
+    - 使用本机dvd
+      - 下载Centos-6.10-x86_64-bin-DVD1.iso
+      - mount到mnt  `mount /dev/cdrom /mnt` 
+      - 修改配置文件
+        - 新建一个backup文件夹，把除了base外的都移进去
+        - 配置文件中删除得只剩下base
+        - base下删除得只剩下 name,baseurl,gpgcheck
+        - gpgcheck改为0
+        - baseurl改成：file:///mnt
+        - yum clean all  yum makecache
+    - 服务器集群中的仓库服务器
+      > 后面讲
+
+  - 常用命令；
+    - 一般
+      - yum repolist :显示仓库列表及仓库中包数量
+      - yum clean all 清除元数据
+      - yum makecache 下载元数据
+      - yum remove:卸载软件
+      - yum update 更新所有安装过的包
+      - yum list 显示安装过的包和未安装过的包
+      - yum search 搜索包
+      - yum install 安装
+      - yum remove 卸载
+      - yum erase 卸载，更干净些
+    - 分组命令：
+      - yum grouplist 查看所有组
+      - yum groupinstall 安装组 “组名中有空格时要加双引号”
+      - yum groupupdate 更新组
+      - yum groupremove 删除组
+      - yum groupinfo 组信息
+
+- 中文文档：
+  > LANG设置只能设置一时，但不设置成一直中文的，要习惯英文环境。就个人学习时，切到中文使用man看看文档
+  - yum groupinstall "Chinese Support"
+  - 设置 LANG=zh_CN.UTF-8
+  - 增加epel的仓库
+  - 更新元数据
+  - 搜索 man-pages-zh-CN
+  - yum install man-pages-zh-CN
+  - 看man bash
+
+  
+
+# 6. shell script
