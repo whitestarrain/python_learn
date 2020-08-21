@@ -481,3 +481,197 @@
   
 
 # 6. shell script
+
+## 6.1. 开始
+
+- pstree:展示进程树
+- 可以启动多层bash
+  - bash打开一层(一个子进程)
+  - exit关闭一层
+
+- 执行bash脚本文件中的代码：
+  - 在当前shell中执行
+    > 两者相同
+    - source filename
+    - . filename
+  - 新shell中执行：
+    > 新建新bash子进程-->执行脚本内容-->关闭子bash子进程
+    - bash filename
+      > `bash filename &` 在后台运行
+      > `#!/bin/bash` 可设置为可执行脚本
+  - **原因:**
+    - 风险方面，新建子进程执行，尽管出现异常，只会关闭子进程，不会对当前进程有影响
+    - 资源方面：子进程和当前进程不共享变量，避免变量名重复定义问题。环境是隔离的
+- 脚本本质： 
+  - 第一行要写可执行程序，会在当前bash进程的子进程中执行
+    - `#!/bin/bash`
+    - `#!/usr/bin/python`
+- 函数：
+  - 定义和使用
+    > 一切皆命令
+    ```shell
+    # 定义函数
+    method(){
+      echo "hello world"
+      ls -l /
+      echo $$ # 返回当前进程id
+      # 第一个$是表示取值
+    }
+    # 调用函数
+    method
+    ```
+  - type method:返回函数定义
+
+- 命令种类：
+  - bulidin
+  - 函数
+  - 磁盘目录下的可执行文件
+
+
+## 6.2. 文本流，重定向
+
+- 预先知识
+  - 文件描述符以及对应指向
+    - /proc目录保存当前进程的抽象成文件后的文件
+    - 数字目录对应进程id
+    - cd /proc/$$ 进入到bash进程目录
+    - 可以看到bash进程中的变量，定义
+    - fd/是文件描述符文件夹，里面有0，1，2三个代表bash进程对应的之前提到的三个流。如果有读取文件和网络，会与更多的文件描述符，socket也在这里.
+    - 0,1,2指向/dev/pts/0
+    - 如果再登录一个用户，会有一个新的bash进程，其中fd中，0,1,2指向 /dev/pts/1
+      ```
+      pts是所谓的伪终端或虚拟终端，再通过ssh的tcp远程登录时
+      打开一个终端，这个终端就叫pts/0，如果你再打开一个终端，这个新的终端就叫pts/1。
+      会通过虚拟终端与linux进行交互
+
+      如果在linux中登录会指向/dev/tty1
+
+      1 当前控制终端（/dev/tty）
+      /dev/tty指的是当前所处的终端,输出到此的内容只会显示在当前工作的终端显示器上;可以使用命令”ps –ax”来查看进程与哪个控制终端相连.对于你登录的shell，
+      /dev/tty就是你使用的终端，设备号是(5,0).
+      使用命令”tty”可以查看自己具体对应哪个实际终端设备./dev/tty有些类似于到实际所使用终端设备的一个联接
+
+      2./dev/pts
+      /dev/pts是远程登陆(telnet,ssh等)后创建的控制台设备文件所在的目录。由于可能有好几千个用户登陆，所以/dev/pts其实是动态生成的，不象其他设备文件是构建系统时就已经产生的硬盘节点.
+
+      3.控制台终端-系统控制台(/dev/console 和 /dev/tty*)
+      在Linux系统中，计算机显示器通常被称为控制台终端(Console).它仿真了类型为Linux的一种终端(TERM=Linux)，并且有一些设备特殊文件与之相关联：
+      tty0、tty1、tty2等.当你在控制台上登录时，使用的是tty1.使用Alt+[F1—F6]组合键时，我们就可以切换到tty2、tty3等上面去.tty1–tty6等称为虚拟终端，
+      而tty0则是当前所使用虚拟终端的一个别名，系统所产生的信息会发送到该终端上.因此不管当前正在使用哪个虚拟终端，系统信息都会发送到控制台终端上.
+      你可以登录到不同的虚拟终端上去，因而可以让系统同时有几个不同的会话期存在.只有系统或超级用户root可以向/dev/tty0进行写操作.
+      ```
+  - 其他
+    - read var1
+      - 开启阻塞等待输入
+      - 遇到换行符结束堵塞
+      - 将数据写入var1
+    - exec
+      - `exec ls -l` 执行流程
+        - bash进程有对应的 栈，堆，代码段
+        - 代码执行后，bash会用ls程序的所有代码覆盖掉bash进程代码段区域的所有代码
+        - cpu从栈中提取数据，从代码段中提取代码
+        - 执行代码。
+        - 因为ls不会堵塞，最后会有一条退出的代码，所以会杀死进程
+      - `exec `
+        - 没有任何命令，也就不会覆盖代码，所以什么事情也没
+      - `exec 8 <> /dev/tcp/www.baidu.com/80`
+        - 没有命令，不会覆盖代码
+        - 但有选项，选项会执行
+        - 创建一个socket，并在这里生成一个映射文件(一切皆文件)
+          > ![](./image/chongdingxiang2.jpg)
+
+
+
+- 重定向不是命令
+  - 作用：不修改源码的情况下，能够修改输入输出方向，既可以指定文件，也可以指定流
+  - 输出
+    - 示例1：
+      > ![](./image/chongdingxiang-1.jpg)
+      - 步骤：
+        - exec 6>&1  让流6指向输出流1指向的位置，做备份
+        - exec 1> /dev/pts/1 修改输出流1的输出位置
+    - 示例2：`ls -l ./ 1> test.txt` 注意，1和>间不能有空格，否则1会被认成参数。1是文件描述符
+      > 将输出重定向到文件，**覆盖>**
+    - 示例3：`ls -l ./ 1>> test.txt` 
+      > 将输出重定向到文件，**追加>>**
+    - 示例3：`ls -l nonefile 2> exception.txt`   错误输出用2
+      > 将错误输出输出到文件
+    - 示例3：`ls -l file nonefile 1>>test.txt 2>> exception.txt` 
+      > 正常输出和错误输出都进行重定向，分别到两个文件
+    - 示例4：`ls -l ./ 1> out.txt 2>&1` 注意；从左向右执行，`1> out.txt`和`2>&1`不能反过来
+      > 指向同一个位置
+      - 简写方式(固定):
+      - `ls -l ./ >& out.txt`
+      - `ls -l ./ &> out.txt`
+  - 输入：
+    - 修改read输入流：
+      - `read var1 0<<<"afdfafawfwae"` 放文本
+        > 没有堵塞，直接输入后结束
+      - `read var1 0<<aaaaa` 堵塞后输入文本
+        > 堵塞，然后输入数据，回车不会作为结束符。输入`aaaaa`后结束堵塞。<br>
+        - 但因为read对换行符敏感，所以只能读取到第一行
+        - cat对换行符不敏感
+          ```shell
+          cat 0<<ooxx
+          contentcontentcontentcontentcontentcontentcontentcontent
+          contentcontentcontentcontentcontentcontentcontentcontent
+          contentcontentcontentcontentcontentcontentcontentcontent
+          ooxx
+
+          echo "hello world"
+          ```
+      - `cat 0< test2` 直接放文件
+        - 不过因为cat本来可以接文件，下面示例可以更好说明(9是socket对应的文件)
+        - 访问网页示例
+          ```shell
+          cd /proc/$$/fd
+          exec 9<> /dev/tcp/github.com/80 # 设置socket (一切皆文件)
+          echo -e "GET / HTTP/1.0 \n" 1>& 9 # 将输出重定向到文件标识符9（socket）
+          # -e 识别转义字符
+          cat 0<& 9  # 将输入重定向到0
+          ```
+
+## 6.3. 变量
+
+- 种类：
+  - 本地
+    - 当前shell拥有的
+    - 生命周期跟随shell
+    - 例：`name=mingzi`
+    - 取值：
+      - $name：取到mingzi
+      - $name111: 取不到值
+      - ${name}111: 取到值并拼接为mingzi111
+  - 局部
+    - 只能用于函数
+    - 通过`local var1` 定义
+    - **函数中可以需修改本地变量的值,所以并不安全**
+  - 位置
+    - 脚本：`bash scriptfile var1 var2 var3`
+    - 函数：`method var1 var2 var3`
+    - $1,$2,$3,${4}: 位置参数
+      - $11:$1再拼上1
+      - ${11} 取第11个参数
+  - 特殊
+    - $#:参数个数
+    - $*:参数列表
+    - $@:参数列表
+    - $$:当前shell的进程id，
+    - $BASHPI:当前shell进程id
+      > 区别：echo $$ | more 会显示当前bash的进程id，因为$$优先级大于管道，会优先替换$$，再执行管道 <br>
+      > echo $BASHPID | more 会显示管道左侧开启bash的进程id，因为$BASKPID优先级小于管道，会执行管道，在进行$BASHPID的替换<br>
+      > 见下面
+    - 管道
+      - 机制：
+        - | 左边启动一个bash
+        - | 右边启动一个bash
+        - 两个bash的io通过重定向连接
+        - 验证 echo $BASHPID | more
+    - $?:上一个命令退出状态。0为成功，非0为报错
+  - 环境
+    - 父进程和子进程在一个环境中
+    - 环境变量是导出不是共享。子进程复制父进程的环境变量的引用
+    - 同时会进行**写时复制**
+    - **所以任何一方环境变量被修改都不会影响其他方**
+    - 同时也避免的全部复制，影响子进程的创建速度和内存消耗
+    - 通过`export v1=value`定义
