@@ -588,8 +588,8 @@
     - 示例1：
       > ![](./image/chongdingxiang-1.jpg)
       - 步骤：
-        - exec 6>&1  让流6指向输出流1指向的位置，做备份
-        - exec 1> /dev/pts/1 修改输出流1的输出位置
+        - `exec 6>&1`  让当前进程（bash进程）流6指向输出流1指向的位置，做备份
+        - `exec 1> /dev/pts/1` 修改输出流1的输出位置
     - 示例2：`ls -l ./ 1> test.txt` 注意，1和>间不能有空格，否则1会被认成参数。1是文件描述符
       > 将输出重定向到文件，**覆盖>**
     - 示例3：`ls -l ./ 1>> test.txt` 
@@ -598,11 +598,12 @@
       > 将错误输出输出到文件
     - 示例3：`ls -l file nonefile 1>>test.txt 2>> exception.txt` 
       > 正常输出和错误输出都进行重定向，分别到两个文件
-    - 示例4：`ls -l ./ 1> out.txt 2>&1` 注意；从左向右执行，`1> out.txt`和`2>&1`不能反过来
+    - 示例4：`ls -l ./ 1> out.txt 2>&1`将1,2两个流都写到一个文件中。 注意；从左向右执行，`1> out.txt`和`2>&1`不能反过来
       > 指向同一个位置
       - 简写方式(固定):
       - `ls -l ./ >& out.txt`
       - `ls -l ./ &> out.txt`
+        > 可以理解为所有输入流&后再重定向（>）
   - 输入：
     - 修改read输入流：
       - `read var1 0<<<"afdfafawfwae"` 放文本
@@ -675,3 +676,260 @@
     - **所以任何一方环境变量被修改都不会影响其他方**
     - 同时也避免的全部复制，影响子进程的创建速度和内存消耗
     - 通过`export v1=value`定义
+    - 其他：
+      - bash file $ 后台运行
+      - sleep 20 ：睡眠20秒
+      - linux中的fork()函数
+
+
+## 6.4. 引用&命令替换
+
+> 三种引用机制查看 man bash
+
+- 引用
+  - 双引号引用
+    - 弱引用
+    - 参数扩展
+  - 单引号引用
+    - 强引用
+    - 不可嵌套
+  ```shell
+  # 单引号会忽略转换过程
+  # 双引号中可以使用转义字符
+  temp=aaaa
+  echo "$temp bbb" # 返回 ”aaaa bbb“
+  echo '$temp bbb' # 返回 "$temp bbb"
+  ```
+  - 对比：
+    ```
+    01 经典解释
+    单引号：所见即所得
+    双引号：所见非所得，它会先把变量解析之后，再输出
+    反引号（``） ：命令替换，通常用于把命令输出结果传给入变量中  如 lines=`ls -l | wc -l`　命令扩展的一种，其他还有　$() $(< file) 。查man bash
+    反斜杠( \ ) ：转义字符/逃脱字符，Linux如果echo要让转义字符发生作用，就要使用-e选项，且转义字符要使用双引号 
+
+    单引号字符串的限制：
+    单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；
+    单引号字串中不能出现单引号（对单引号使用转义符后也不行）。
+    双引号的优点：
+    双引号里可以有变量
+    双引号里可以出现转义字符
+
+    再来看看反斜杠：一般用作转义字符，或称逃脱字符，Linux如果echo要让转义字符发生作用，就要使用-e选项，且转义字符要使用双引号
+    反斜杠的另一种作用，就是当反斜杠用于一行的最后一个字符时，Shell把行尾的反斜杠作为续行，这种结构在分几行输入长命令时经常使用。
+    ```
+  - 花括号扩展不能被引用，否则花括号扩展不会被触发
+  - 命令执行会前删除引用
+
+- 命令替换（扩展之一）
+  > 将扩展部分的命令执行完后，将结果放在扩展部分
+  - ``
+  - $()
+  - $(< file)
+  ```shell
+  lines=`ls -l | wc -l`
+  lines=$(ls -l | wc -l)
+  lines=$(< scriptfile)
+  ```
+
+## 6.5. 退出状态&逻辑判断
+
+- 退出状态：
+  - echo $?
+- 逻辑判断
+  > man bash 控制操作符 算术求值,
+  - command1||commond2
+  - commond1&&commond2
+  ```shell
+  控制操作符 && 和 ││ 分别代表 AND 和 OR 序列。一个 AND 序列的形式是
+        command1 && command2
+  command2 只有在 command1 返回 0 时才被执行。
+  例：
+  ls / && echo ok
+  make && make install
+
+  一个 OR 序列的形式是
+        command1 ││ command2
+  command2 只有在 command1 返回非 0 状态时才被执行。AND 和 OR 序列的返回状态是序列中最
+  后执行的命令的返回状态。
+  ```
+
+## 6.6. 表达式
+
+> man bash shell语法>表达式
+
+- 算术表达式
+  - 结构
+    - $var1+$var2
+    - $((var1+var2))
+      > **$只是取值，主要是双小括号**
+  ```shell
+  a=1 # 再次提醒，不能随便加空格
+  b=2
+  let c=$a+$b
+  let d=$((a+b))
+  ((d++))
+  ```
+
+- 条件表达式
+  - test
+    > help test 查查看
+  - []
+  ```shell
+  test 8 -gt 1 && echo "is true"  # 不能使用大于号，否则会被识别为重定向
+  # gt是greater than的缩写，mongodb中也有用到
+  [ 8 -gt 1 ] && echo "is true"
+  # type '[' 会发现 [ 是内建命令之一
+  # 因此中括号和表达式必须要用空格分开
+  ```
+
+
+## 6.7. 流程控制
+
+> **全部通过help进行学习**
+
+- if
+  ```shell
+  if ls /; then echo 'ok'; else echo 'no ok';fi
+  if [ 3 -gt 8 ]; then echo 'ok'; else echo 'no ok';fi  # 中括号就是test
+  ```
+- for
+  ```shell
+  for ((i=0;i<10;i++));do echo $i;done
+  for  i in 111 222 333 '444 444'; do echo $i; done  # in后的会根据空白符切割，识别为一个集合,如果字符串中有空格的话，就要使用引用
+  ```
+- while
+  ```shell
+  while ls ~/god &>/dev/null;do echo 'has /god'; rm -fr ~/god;done
+  ```
+- case
+  ```shell
+
+  ```
+
+## 6.8. 练习
+
+- shell编程一切皆命令
+- 习惯通过 $? 进行逻辑判断
+- 不要逻辑或逻辑与混着用，否则容易混,出现歧义
+- 命令扩展后，会讲结果进行词的拆分。 echo $IFS 查看。默认是空格和换行符
+
+```shell
+# 写一个脚本
+# 添加用户
+# 用户密码同用户名
+# 静默运行脚本，不要又各种输出
+# 避免捕获用户接口,一口气把参数给足
+# 程序自定义输出
+  # 成功或失败
+
+#!/bin/bash
+[ ! $# -eq 1 ] && echo 'param numbers error' && exit 3  # 0为正常退出，非0为错误退出
+# 不要逻辑或逻辑与混着用，否则容易混,出现歧义
+
+id $1 &>/dev/null && echo 'user has exist' && exit 4
+# echo $? 可以发现 id 存在用户 返回0,即true
+
+useradd $1 &>/dev/null && echo $1 | passwd --stdin $1 &> /dev/null && echo `useradd ok` && exit 0
+# passwd  $1 0<<<$1 这是修改bash进程输入流，而不是passwd进程,所以不能用
+# 从标准输入流读取   man passwd查看
+# $> 全部输出到 /dev/null ，静默输出
+echo 'just root can add user'
+exit 5
+```
+
+```shell
+# 用户给定路径
+# 递归遍历文件
+# 输出文件大小最大的文件
+
+#!/bin/bash
+oldIFS=$IFS
+IFS=$'\n' # $'' 表示取字符在ascii码中的码值
+for i in `du -a $a | sort -nr`;do # 命令扩展后，会讲结果进行词的拆分。 echo $ifs 查看。默认是空格和换行符
+  filename=`echo $i | awk '{print $2}'`
+  if [ -f $filename ];then # help test 查看-f选项
+    echo $filename
+    exit 0
+  fi
+done
+$IFS=oldIFS
+
+echo 'file not find'
+exit 2
+```
+
+
+```shell
+# 循环遍历文件每一行，定义一个计时器num，打印num正好是文件行数.
+
+# 方式一  高级for
+#!/bin/bash
+oldifs=$IFS
+IFS=$'\n'
+num=0
+for i in  `cat test.txt`  ;do
+  echo $i
+  ((num++))
+done
+echo num:$num
+IFS=$oldifs
+
+#方式二 for循环
+#!/bin/bash
+num=0
+lines=`cat test.txt|wc -l`
+for ((i=1;i<=lines;i++));do
+  head -$i test.txt|tail -1
+  ((num++))
+done
+echo num:$num
+
+# 方式三 重定向
+num=0
+exec 8<&0  # 备份bash进程输入流位置
+exec 0< test.txt
+# read命令是从标准输入流中读取数据。read对换行符敏感。读一次读一行
+while read line;do
+  echo $line
+  ((num++))
+done
+echo $num
+exec 0<&8  # 恢复输入流位置
+
+# 方式四：方式三的变种,方式三为方式四的本质
+num=0
+while read line;do
+  echo $lline
+  ((num++))
+done 0<test.txt  # 更改while命令进程的输入流，不过while是build in shell，所以也就是在更改shell的标准输入流
+                 # 不过while执行结束后，会自动将标准输入流复原
+echo num:$num
+
+# 方式五 管道
+#!/bin/bash
+# 进程间资源不共享
+# num=0  # 子进程不能修改父进程数据,所以num要定义在右边，又因为while是一个语句块，想要添加语句就要使用{}
+cat test.txt|{
+num=0
+while read line;do
+      echo $line
+      ((num++))  # 无法修改父进程的num
+done
+echo $num
+}
+```
+
+## 七个扩展
+
+> man bash 吧，所有都在man bash
+
+- 1，花括号  mkdir  -p sdfsdf/{a,b,c}sdfsdf
+- 2，波浪线 cd ~god
+- 3，变量&参数  $  $$  ${}(.....)
+- 4，命令替换 ls -l `echo $path`
+- 5，算术扩展  num=$((3+4))
+- 6，word拆分，$IFS
+- 7，路径  *（零到多个任意字符）？
+- 8，引用删除   echo "hello"
+- *，重定向  >  
