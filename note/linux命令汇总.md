@@ -1,6 +1,6 @@
 # 1. 开始
 
-> 虚拟机集群的步骤看ppt
+> 虚拟机集群的步骤看 ppt
 
 - type(类似 which)
   - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
@@ -33,11 +33,12 @@
   - 1 正确的输出流
   - 2 错误的输出流
 
-----
+---
 
 # 2. 目录相关
 
 - 目录
+
   - /boot:系统启动相关文件
   - /etc:配置文件
   - /home:存放除 root 用户外的用户目录
@@ -75,6 +76,7 @@
 - hash:存储执行过的命令，提高下一次命令查找速度
   - hash -r 清除
 - 文件系统命令：
+
   - df
   - du
   - ls
@@ -118,6 +120,7 @@
 - tail 显示最后面的内容，-4 表示显示四行
   > head -4 file | tail -1 显示第四行
 - 管道：
+
   - cat file | more 可以分屏显示内容
   - echo "/" | ls -l **不会显示根目录文件夹**
     > 每个程序都有输入流，但不一定会用到。比如 ls，只会判定传入的参数，而并没有读取输入流
@@ -134,7 +137,7 @@
 
   - `-v` 反显
   - `-e` 使用扩展正则表达式
-  - **grep和vim 中默认()为字符，如果要分组就要使用`\(word\)`**※
+  - **grep 和 vim 中默认()为字符，如果要分组就要使用`\(word\)`**※
   - **python 中()默认为分组，通过\进行转义为字符**
   - 另外括号嵌套是，比如(())，数左括号，左边第一个是第一组，第二个是第二组
   - 正则表达式单词边界匹配(grep 独有,python 中为\b)：
@@ -142,11 +145,11 @@
     - `def\>` 以 def 结尾的单词
     - `\<word\>` word 单词。注意，这样查到的`$word` `word.`也是符合的
 
-----
+---
 
 # 3. 文本处理
 
-* cut：切割行。比如查看数据库表数据时
+- cut：切割行。比如查看数据库表数据时
 
   - f:选择显示的列
   - s:不显示没有分隔符的行
@@ -156,7 +159,7 @@
     - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
     - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
 
-* sort:排序文件的行后输出。字典序或数值序
+- sort:排序文件的行后输出。字典序或数值序
 
   - n:按数值排序。默认字典序。（从第一个字符进行排序）
   - 自定义排序方式:
@@ -167,12 +170,13 @@
   - u:合并相同行
   - f:忽略大小写
 
-* wc:统计。linw，word，bytes
+- wc:统计。linw，word，bytes
+
   - l:只统计行数
   - 通常统计后面会有文件名，通过 cat file | wc -l 可以统计行数而不带文件名
   - 其他统计用 man 查一下吧
 
-* sed :行编辑器
+- sed :行编辑器
   > 类似 vi 的末行模式,只会显示修改后的内容，要加 i 选项才能保存到文件中
   - 选项
     - sed [options] `AddressCommand` file
@@ -204,44 +208,47 @@
     - `sed -n "/[0-9]/p" test.txt` 显示包含数字的行 可以由 `grep "[0-9] test.txt"代替`
     - `sed "s/3333/11111/g"` 替换
 
-- awk
+* awk
+
   - 说明:
-    - awk是一个强大的文本分析工具。
-    - 相对于grep的查找，sed的编辑，awk在其对数据分析并生成报告时， 显得尤为强大。
-    - 简单来说awk就是把文件逐行的读入，空格，制表符）为默认分隔符 将每行切片，切开的部分再进行各种分析处理。 
-    - 可以用来代替cut，sort，sed
+    - awk 是一个强大的文本分析工具。
+    - 相对于 grep 的查找，sed 的编辑，awk 在其对数据分析并生成报告时， 显得尤为强大。
+    - 简单来说 awk 就是把文件逐行的读入，空格，制表符）为默认分隔符 将每行切片，切开的部分再进行各种分析处理。
+    - 可以用来代替 cut，sort，sed
   - 使用：
     - awk -F '{pattern + action}' {filenames}
       > **必须是单引号**
     - 支持自定义分隔符.默认为空格
     - 支持正则表达式匹配
-    - 支持自定义变量，数组  a[1]  a[tom]  map(key)
+    - 支持自定义变量，数组 a[1] a[tom] map(key)
     - 支持内置变量
-      - NF                 浏览记录的域(列)的个数
-      - NR                 已读的记录数(行数)
-      - ARGC               命令行参数个数
-      - ARGV               命令行参数排列
-      - ENVIRON            支持队列中系统环境变量的使用
-      - FILENAME           awk浏览的文件名
-      - FNR                浏览文件的记录数
-      - FS                 设置输入域分隔符，等价于命令行 -F选项
-      - OFS                输出域分隔符
-      - ORS                输出记录分隔符
-      - RS                 控制记录分隔符
+      - NF 浏览记录的域(列)的个数
+      - NR 已读的记录数(行数)
+      - ARGC 命令行参数个数
+      - ARGV 命令行参数排列
+      - ENVIRON 支持队列中系统环境变量的使用
+      - FILENAME awk 浏览的文件名
+      - FNR 浏览文件的记录数
+      - FS 设置输入域分隔符，等价于命令行 -F 选项
+      - OFS 输出域分隔符
+      - ORS 输出记录分隔符
+      - RS 控制记录分隔符
     - 支持函数
       - print、split、substr、sub、gsub
-    - 支持流程控制语句，类C语言
+    - 支持流程控制语句，类 C 语言
       - if、while、do/while、for、break、continue
   - 示例：
-    - `awk -F':' '{print $1}' passwd ` 打印以冒号分割得到的第一列  。相当于 `cut -d':' -f1 passwd`
-    - `awk -F':' 'BEGIN{print "name\shell"}  {print $1 "\t" $7}  END{print "end"}' passwd ` 打印表头，分割后的1，7行，最后结束提示
+
+    - `awk -F':' '{print $1}' passwd` 打印以冒号分割得到的第一列 。相当于 `cut -d':' -f1 passwd`
+    - `awk -F':' 'BEGIN{print "name\shell"} {print $1 "\t" $7} END{print "end"}' passwd` 打印表头，分割后的 1，7 行，最后结束提示
       - BEGIN{}是在处理前调用
       - 匿名函数是每行的操作
       - END{}是处理完后调用
-    - `awk '/word/ {print $0}'` 打印包含word的行
-    - `awk '/word/ {print $0} {print $0}'` 打印包含word的行后，再全打印一遍
+    - `awk '/word/ {print $0}'` 打印包含 word 的行
+    - `awk '/word/ {print $0} {print $0}'` 打印包含 word 的行后，再全打印一遍
     - `awk -F':' '{print NR"\t"NF"\t"$0}'`打印每行行号，列数，完成内容，为一个表格
     - 计算合计工资
+
       ```
       统计报表：合计每人1月的工资，0：manager，1：worker
 
@@ -269,42 +276,40 @@
             print i "\t" position[i] "\t" name[i]
           }
       }' wagetable.txt
-      
-
       ```
 
+- 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
 
-- 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导sbin目录下init程序作为第一个进程-->该进程读取/etc/inittab  中的开机设置
   > 小知识
-  - 3 是命令行模式，
-  - 5是图形界面模式，
-  - 0是直接关机无法开机，
-  - 6是立刻重启死循环，
-  - 1是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
-  - 不过linux中图形界面并没有在内核代码中，需要安装后台程序
 
-- /etc/passwd文件
+  - 3 是命令行模式，
+  - 5 是图形界面模式，
+  - 0 是直接关机无法开机，
+  - 6 是立刻重启死循环，
+  - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
+  - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
+
+- /etc/passwd 文件
   - root:x:0:0:root:/root:/bin/bash
   - 冒号分隔符
   - 一行是一个用户的信息
-  - 用户名:x:用户id号:组id号:用户描述信息:用户家目录:用户以交互模式登录时的shell外壳程序
-    > 原本加密后的密码是保存在x那里的，但因为不安全，所以移除了，x用来占位
+  - 用户名:x:用户 id 号:组 id 号:用户描述信息:用户家目录:用户以交互模式登录时的 shell 外壳程序
+    > 原本加密后的密码是保存在 x 那里的，但因为不安全，所以移除了，x 用来占位
 
-
-----
+---
 
 # 4. 用户和权限
 
 > 了解逻辑，以后工作后要知道自己想要什么权限的用户。或者哪个程序的管理员，哪个程序的普通用户
 
-- x权限
-  - x对目录是打开权限
+- x 权限
+  - x 对目录是打开权限
   - 对文件是运行权限
-  - 文件默认不给x
-- useradd   添加用户
-- passwd:普通用户可以修改自己密码，只有root用户能修改别人密码
+  - 文件默认不给 x
+- useradd 添加用户
+- passwd:普通用户可以修改自己密码，只有 root 用户能修改别人密码
 - users:查看当前登录用户
-- id username 查看用户id信息
+- id username 查看用户 id 信息
 - su 切换用户 switch user
 - groupadd 创建组
 - usermod 修改用户元数据
@@ -312,17 +317,19 @@
   - G 组
 - chown 修改持有者和组 chown -R mysqladmin:mysqlgroup /otp/mysql
 - chmod 修改用户，组权限
-- 两个用户间user1,user1间交互部分数据：  
+- 两个用户间 user1,user1 间交互部分数据：
+
   > 先创建好用户和组，再分配权限
+
   - 创建 mkdir /share
-  - 创建一个组   
+  - 创建一个组
     - groupadd user12share
-  - user1.user2加入同一个组 
+  - user1.user2 加入同一个组
     - usermod -a -G user12share user01
     - usermod -a -G user12share user02
   - 给够组的权限
     - chown root:user12share /share
-      > change owner 让用户root和组user12share持有
+      > change owner 让用户 root 和组 user12share 持有
     - chmod g+w /share
       > ugo user,group,other
   - 减掉其他人的权限
@@ -332,21 +339,20 @@
 
 - 管理员：
   - 操作系统管理员只有一个；root
-  - 如果有能够访问和运行某程序管理程序的的权限，就是某程序的管理员，比如mysql管理员
+  - 如果有能够访问和运行某程序管理程序的的权限，就是某程序的管理员，比如 mysql 管理员
   - 权限更新后一定要重新登录
 
-
-----
+---
 
 # 5. 软件安装
 
 - 编译安装(自己编译安装)
   - 说明：
-    > 服务器要求稳定性。而软件越大，bug的风险越高。同时软件开发更多趋向于模块化，所以可以在编译期剔除一些模块，个性化得得到一个软件
+    > 服务器要求稳定性。而软件越大，bug 的风险越高。同时软件开发更多趋向于模块化，所以可以在编译期剔除一些模块，个性化得得到一个软件
     - 配置文件：Makefile
     - 编译安装命令：make（会自动查找编译器）
-  - 安装tengine
-    - 阅读README查看安装步骤
+  - 安装 tengine
+    - 阅读 README 查看安装步骤
       ```
       To install Tengine, just follow these three steps:
       $ ./configure
@@ -355,30 +361,32 @@
       ```
     - ./configure --help 查看安装选项
       > 可以通过安装选项选择关闭模块，安装位置等
-    - ./configure --prefix="/opt/learn/nginx"  （安装选项prefix是安装目录）
+    - ./configure --prefix="/opt/learn/nginx" （安装选项 prefix 是安装目录）
     - 开始安装，看输出报错，是否缺少依赖。缺少的话就装下，不断解决依赖问题
-    - 创建MakeFile文件创建完成（读读看，其实会内容会读取objs/Makefile）
-    - make  (默认读取Makefile文件)(是在进行编译)
+    - 创建 MakeFile 文件创建完成（读读看，其实会内容会读取 objs/Makefile）
+    - make (默认读取 Makefile 文件)(是在进行编译)
     - make install（这一步是安装，将编译后的文件拷贝到目标文件夹）
-    - /opt/learn/nginx下会出现软件目录
-    - /opt/learn/nginx/sbin下有启动程序
-    - 启动后可以在windows上访问
-- rpm安装:包(编译后的包)
-  > 有些软件不在仓库中。比如jvm，一个oracle的，一个openjdk，还有其他。仓库中安装的是openjdk <br>
+    - /opt/learn/nginx 下会出现软件目录
+    - /opt/learn/nginx/sbin 下有启动程序
+    - 启动后可以在 windows 上访问
+- rpm 安装:包(编译后的包)
+
+  > 有些软件不在仓库中。比如 jvm，一个 oracle 的，一个 openjdk，还有其他。仓库中安装的是 openjdk <br>
   > 但不能自动安装依赖
+
   - 安装：
-    - rpm  -i filename.rpm  (-i 表示 --install )
+    - rpm -i filename.rpm (-i 表示 --install )
   - 查询：
     - rpm -qa 查询所有安装的软件的包的名称（不显示编译安装的） ※
-    - rpm -ql 包名  显示包rpm -qa : 查询已经安装的包 ※
-    - rpm -qf /path/to/somefile: 查询文件是由哪个rpm包安装生成的(逆向查询)	※
+    - rpm -ql 包名 显示包 rpm -qa : 查询已经安装的包 ※
+    - rpm -qf /path/to/somefile: 查询文件是由哪个 rpm 包安装生成的(逆向查询) ※
       > 原理：安装时会讲包名和安装文件目录存到数据库中，所以尽管文件被删除了也没问题
-    - rpm -q  PACKAGE_NAME: 查询指定的包是否已经安装
+    - rpm -q PACKAGE_NAME: 查询指定的包是否已经安装
     - rpm -qi PACKAGE_NAME: 查询指定包的说明信息
     - rpm -qc PACEAGE_NEME：查询指定包安装的配置文件
     - rpm -qd PACKAGE_NAME: 查询指定包安装的帮助文件
-    - rpm -q --scripts PACKAGE_NAME: 查询指定包中包含的脚本	
-    - 如果某rpm包尚未安装，需查询其说明信息、安装以后会生成的文件
+    - rpm -q --scripts PACKAGE_NAME: 查询指定包中包含的脚本
+    - 如果某 rpm 包尚未安装，需查询其说明信息、安装以后会生成的文件
       - rpm -qpi /PATH/TO/PACKAGE_FILE
       - rpm -qpl 释放了哪些文件到哪里
   - 升级：
@@ -387,7 +395,7 @@
   - 卸载:
     - -e PACKAGE_NAME
   - 设置环境变量
-    - 安装完软件后也会自动在$PATH中默认目录下添加一些软链接（注意，不是全部），为了解决问题可以添加环境变量
+    - 安装完软件后也会自动在\$PATH 中默认目录下添加一些软链接（注意，不是全部），为了解决问题可以添加环境变量
       ```
       # 安装完jdk后
       [root@node0001 bin]# ll | grep java
@@ -404,22 +412,27 @@
       export JAVA_HOME=/usr/java/jdk1.7.0_67
       export PATH=$PATH:$JAVA_HOME/bin   # 拼接PATH
       ```
-    - 更新配置  `source /etc/profile` 
+    - 更新配置 `source /etc/profile`
 
-- yum安装:仓库
-  > 会自动安装依赖。底层会调用rpm。只是rpm的一种封装
+- yum 安装:仓库
+
+  > 会自动安装依赖。底层会调用 rpm。只是 rpm 的一种封装
+
   - 原理：
-    - 基于rpm包管理
-    - 提供rpm仓库。组成：
-      - rpm包
+    - 基于 rpm 包管理
+    - 提供 rpm 仓库。组成：
+      - rpm 包
       - 元数据描述文件
   - 流程：
     - 元数据下载到本地
     - 推断依赖包，包名，版本号等
     - 安装依赖包和目的包
-  - repo配置`/etc/yum.repos.d/`：
+  - repo 配置`/etc/yum.repos.d/`：
+
     - 配置文件说明：；
+
       - Centos-Base.repo
+
         ```
         [base]  # 仓库名称,可以有多个仓库
         name=CentOS-$releasever - Base  # 逻辑描述，怎么都行
@@ -431,21 +444,22 @@
         gpgcheck=1
         gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
         ```
+
     - 国内镜像站配置
       - 可以根据镜像站说明配置镜像源
       - 配置完成后，：
         - yum clean all 清除元数据
         - yum makecache 下载元数据
-    - 使用本机dvd
-      - 下载Centos-6.10-x86_64-bin-DVD1.iso
-      - mount到mnt  `mount /dev/cdrom /mnt` 
+    - 使用本机 dvd
+      - 下载 Centos-6.10-x86_64-bin-DVD1.iso
+      - mount 到 mnt `mount /dev/cdrom /mnt`
       - 修改配置文件
-        - 新建一个backup文件夹，把除了base外的都移进去
-        - 配置文件中删除得只剩下base
-        - base下删除得只剩下 name,baseurl,gpgcheck
-        - gpgcheck改为0
-        - baseurl改成：file:///mnt
-        - yum clean all  yum makecache
+        - 新建一个 backup 文件夹，把除了 base 外的都移进去
+        - 配置文件中删除得只剩下 base
+        - base 下删除得只剩下 name,baseurl,gpgcheck
+        - gpgcheck 改为 0
+        - baseurl 改成：file:///mnt
+        - yum clean all yum makecache
     - 服务器集群中的仓库服务器
       > 后面讲
 
@@ -469,44 +483,46 @@
       - yum groupinfo 组信息
 
 - 中文文档：
-  > LANG设置只能设置一时，但不设置成一直中文的，要习惯英文环境。就个人学习时，切到中文使用man看看文档
+
+  > LANG 设置只能设置一时，但不设置成一直中文的，要习惯英文环境。就个人学习时，切到中文使用 man 看看文档
+
   - yum groupinstall "Chinese Support"
   - 设置 LANG=zh_CN.UTF-8
-  - 增加epel的仓库
+  - 增加 epel 的仓库
   - 更新元数据
   - 搜索 man-pages-zh-CN
   - yum install man-pages-zh-CN
-  - 看man bash
-
-  
+  - 看 man bash
 
 # 6. shell script
 
 ## 6.1. 开始
 
 - pstree:展示进程树
-- 可以启动多层bash
-  - bash打开一层(一个子进程)
-  - exit关闭一层
+- 可以启动多层 bash
 
-- 执行bash脚本文件中的代码：
-  - 在当前shell中执行
+  - bash 打开一层(一个子进程)
+  - exit 关闭一层
+
+- 执行 bash 脚本文件中的代码：
+  - 在当前 shell 中执行
     > 两者相同
     - source filename
     - . filename
-  - 新shell中执行：
-    > 新建新bash子进程-->执行脚本内容-->关闭子bash子进程
+  - 新 shell 中执行：
+    > 新建新 bash 子进程-->执行脚本内容-->关闭子 bash 子进程
     - bash filename
       > `bash filename &` 在后台运行
       > `#!/bin/bash` 可设置为可执行脚本
   - **原因:**
     - 风险方面，新建子进程执行，尽管出现异常，只会关闭子进程，不会对当前进程有影响
     - 资源方面：子进程和当前进程不共享变量，避免变量名重复定义问题。环境是隔离的
-- 脚本本质： 
-  - 第一行要写可执行程序，会在当前bash进程的子进程中执行
+- 脚本本质：
+  - 第一行要写可执行程序，会在当前 bash 进程的子进程中执行
     - `#!/bin/bash`
     - `#!/usr/bin/python`
 - 函数：
+
   - 定义和使用
     > 一切皆命令
     ```shell
@@ -527,18 +543,20 @@
   - 函数
   - 磁盘目录下的可执行文件
 
-
 ## 6.2. 文本流，重定向
 
 - 预先知识
+
   - 文件描述符以及对应指向
-    - /proc目录保存当前进程的抽象成文件后的文件
-    - 数字目录对应进程id
-    - cd /proc/$$ 进入到bash进程目录
-    - 可以看到bash进程中的变量，定义
-    - fd/是文件描述符文件夹，里面有0，1，2三个代表bash进程对应的之前提到的三个流。如果有读取文件和网络，会与更多的文件描述符，socket也在这里.
-    - 0,1,2指向/dev/pts/0
-    - 如果再登录一个用户，会有一个新的bash进程，其中fd中，0,1,2指向 /dev/pts/1
+
+    - /proc 目录保存当前进程的抽象成文件后的文件
+    - 数字目录对应进程 id
+    - cd /proc/\$\$ 进入到 bash 进程目录
+    - 可以看到 bash 进程中的变量，定义
+    - fd/是文件描述符文件夹，里面有 0，1，2 三个代表 bash 进程对应的之前提到的三个流。如果有读取文件和网络，会与更多的文件描述符，socket 也在这里.
+    - 0,1,2 指向/dev/pts/0
+    - 如果再登录一个用户，会有一个新的 bash 进程，其中 fd 中，0,1,2 指向 /dev/pts/1
+
       ```
       pts是所谓的伪终端或虚拟终端，再通过ssh的tcp远程登录时
       打开一个终端，这个终端就叫pts/0，如果你再打开一个终端，这个新的终端就叫pts/1。
@@ -560,58 +578,63 @@
       而tty0则是当前所使用虚拟终端的一个别名，系统所产生的信息会发送到该终端上.因此不管当前正在使用哪个虚拟终端，系统信息都会发送到控制台终端上.
       你可以登录到不同的虚拟终端上去，因而可以让系统同时有几个不同的会话期存在.只有系统或超级用户root可以向/dev/tty0进行写操作.
       ```
+
   - 其他
     - read var1
       - 开启阻塞等待输入
       - 遇到换行符结束堵塞
-      - 将数据写入var1
+      - 将数据写入 var1
     - exec
       - `exec ls -l` 执行流程
-        - bash进程有对应的 栈，堆，代码段
-        - 代码执行后，bash会用ls程序的所有代码覆盖掉bash进程代码段区域的所有代码
-        - cpu从栈中提取数据，从代码段中提取代码
+        - bash 进程有对应的 栈，堆，代码段
+        - 代码执行后，bash 会用 ls 程序的所有代码覆盖掉 bash 进程代码段区域的所有代码
+        - cpu 从栈中提取数据，从代码段中提取代码
         - 执行代码。
-        - 因为ls不会堵塞，最后会有一条退出的代码，所以会杀死进程
-      - `exec `
+        - 因为 ls 不会堵塞，最后会有一条退出的代码，所以会杀死进程
+      - `exec`
         - 没有任何命令，也就不会覆盖代码，所以什么事情也没
       - `exec 8 <> /dev/tcp/www.baidu.com/80`
         - 没有命令，不会覆盖代码
         - 但有选项，选项会执行
-        - 创建一个socket，并在这里生成一个映射文件(一切皆文件)
+        - 创建一个 socket，并在这里生成一个映射文件(一切皆文件)
           > ![](./image/chongdingxiang2.jpg)
 
+* 重定向不是命令
 
-
-- 重定向不是命令
   - 作用：不修改源码的情况下，能够修改输入输出方向，既可以指定文件，也可以指定流
   - 输出
-    - 示例1：
+    - 示例 1：
       > ![](./image/chongdingxiang-1.jpg)
       - 步骤：
-        - `exec 6>&1`  让当前进程（bash进程）流6指向输出流1指向的位置，做备份
-        - `exec 1> /dev/pts/1` 修改输出流1的输出位置
-    - 示例2：`ls -l ./ 1> test.txt` 注意，1和>间不能有空格，否则1会被认成参数。1是文件描述符
+        - `exec 6>&1` 让当前进程（bash 进程）流 6 指向输出流 1 指向的位置，做备份
+        - `exec 1> /dev/pts/1` 修改输出流 1 的输出位置
+    - 示例 2：`ls -l ./ 1> test.txt` 注意，1 和>间不能有空格，否则 1 会被认成参数。1 是文件描述符
       > 将输出重定向到文件，**覆盖>**
-    - 示例3：`ls -l ./ 1>> test.txt` 
+    - 示例 3：`ls -l ./ 1>> test.txt`
       > 将输出重定向到文件，**追加>>**
-    - 示例3：`ls -l nonefile 2> exception.txt`   错误输出用2
+    - 示例 3：`ls -l nonefile 2> exception.txt` 错误输出用 2
       > 将错误输出输出到文件
-    - 示例3：`ls -l file nonefile 1>>test.txt 2>> exception.txt` 
+    - 示例 3：`ls -l file nonefile 1>>test.txt 2>> exception.txt`
       > 正常输出和错误输出都进行重定向，分别到两个文件
-    - 示例4：`ls -l ./ 1> out.txt 2>&1`将1,2两个流都写到一个文件中。 注意；从左向右执行，`1> out.txt`和`2>&1`不能反过来
+    - 示例 4：`ls -l ./ 1> out.txt 2>&1`将 1,2 两个流都写到一个文件中。 注意；从左向右执行，`1> out.txt`和`2>&1`不能反过来
       > 指向同一个位置
       - 简写方式(固定):
       - `ls -l ./ >& out.txt`
       - `ls -l ./ &> out.txt`
         > 可以理解为所有输入流&后再重定向（>）
   - 输入：
-    - 修改read输入流：
+
+    - 修改 read 输入流：
+
       - `read var1 0<<<"afdfafawfwae"` 放文本
         > 没有堵塞，直接输入后结束
       - `read var1 0<<aaaaa` 堵塞后输入文本
+
         > 堵塞，然后输入数据，回车不会作为结束符。输入`aaaaa`后结束堵塞。<br>
-        - 但因为read对换行符敏感，所以只能读取到第一行
-        - cat对换行符不敏感
+
+        - 但因为 read 对换行符敏感，所以只能读取到第一行
+        - cat 对换行符不敏感
+
           ```shell
           cat 0<<ooxx
           contentcontentcontentcontentcontentcontentcontentcontent
@@ -621,8 +644,9 @@
 
           echo "hello world"
           ```
+
       - `cat 0< test2` 直接放文件
-        - 不过因为cat本来可以接文件，下面示例可以更好说明(9是socket对应的文件)
+        - 不过因为 cat 本来可以接文件，下面示例可以更好说明(9 是 socket 对应的文件)
         - 访问网页示例
           ```shell
           cd /proc/$$/fd
@@ -636,13 +660,13 @@
 
 - 种类：
   - 本地
-    - 当前shell拥有的
-    - 生命周期跟随shell
+    - 当前 shell 拥有的
+    - 生命周期跟随 shell
     - 例：`name=mingzi`
     - 取值：
-      - $name：取到mingzi
-      - $name111: 取不到值
-      - ${name}111: 取到值并拼接为mingzi111
+      - \$name：取到 mingzi
+      - \$name111: 取不到值
+      - \${name}111: 取到值并拼接为 mingzi111
   - 局部
     - 只能用于函数
     - 通过`local var1` 定义
@@ -651,24 +675,25 @@
     - 脚本：`bash scriptfile var1 var2 var3`
     - 函数：`method var1 var2 var3`
     - $1,$2,$3,${4}: 位置参数
-      - $11:$1再拼上1
-      - ${11} 取第11个参数
+      - $11:$1 再拼上 1
+      - \${11} 取第 11 个参数
   - 特殊
-    - $#:参数个数
-    - $*:参数列表
-    - $@:参数列表
-    - $$:当前shell的进程id，
-    - $BASHPI:当前shell进程id
-      > 区别：echo $$ | more 会显示当前bash的进程id，因为$$优先级大于管道，会优先替换$$，再执行管道 <br>
-      > echo $BASHPID | more 会显示管道左侧开启bash的进程id，因为$BASKPID优先级小于管道，会执行管道，在进行$BASHPID的替换<br>
+    - \$#:参数个数
+    - \$\*:参数列表
+    - \$@:参数列表
+    - $$
+      $$
+    - \$BASHPI:当前 shell 进程 id
+      > 区别：echo $$ | more 会显示当前bash的进程id，因为$$优先级大于管道，会优先替换\$$，再执行管道 <br>
+      > echo $BASHPID | more 会显示管道左侧开启 bash 的进程 id，因为$BASKPID优先级小于管道，会执行管道，在进行$BASHPID 的替换<br>
       > 见下面
     - 管道
       - 机制：
-        - | 左边启动一个bash
-        - | 右边启动一个bash
-        - 两个bash的io通过重定向连接
-        - 验证 echo $BASHPID | more
-    - $?:上一个命令退出状态。0为成功，非0为报错
+        - | 左边启动一个 bash
+        - | 右边启动一个 bash
+        - 两个 bash 的 io 通过重定向连接
+        - 验证 echo \$BASHPID | more
+    - \$?:上一个命令退出状态。0 为成功，非 0 为报错
   - 环境
     - 父进程和子进程在一个环境中
     - 环境变量是导出不是共享。子进程复制父进程的环境变量的引用
@@ -677,22 +702,23 @@
     - 同时也避免的全部复制，影响子进程的创建速度和内存消耗
     - 通过`export v1=value`定义
     - 其他：
-      - bash file $ 后台运行
-      - sleep 20 ：睡眠20秒
-      - linux中的fork()函数
-
+      - bash file \$ 后台运行
+      - sleep 20 ：睡眠 20 秒
+      - linux 中的 fork()函数
 
 ## 6.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
 - 引用
+
   - 双引号引用
     - 弱引用
     - 参数扩展
   - 单引号引用
     - 强引用
     - 不可嵌套
+
   ```shell
   # 单引号会忽略转换过程
   # 双引号中可以使用转义字符
@@ -700,13 +726,15 @@
   echo "$temp bbb" # 返回 ”aaaa bbb“
   echo '$temp bbb' # 返回 "$temp bbb"
   ```
+
   - 对比：
+
     ```
     01 经典解释
     单引号：所见即所得
     双引号：所见非所得，它会先把变量解析之后，再输出
     反引号（``） ：命令替换，通常用于把命令输出结果传给入变量中  如 lines=`ls -l | wc -l`　命令扩展的一种，其他还有　$() $(< file) 。查man bash
-    反斜杠( \ ) ：转义字符/逃脱字符，Linux如果echo要让转义字符发生作用，就要使用-e选项，且转义字符要使用双引号 
+    反斜杠( \ ) ：转义字符/逃脱字符，Linux如果echo要让转义字符发生作用，就要使用-e选项，且转义字符要使用双引号
 
     单引号字符串的限制：
     单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；
@@ -718,14 +746,15 @@
     再来看看反斜杠：一般用作转义字符，或称逃脱字符，Linux如果echo要让转义字符发生作用，就要使用-e选项，且转义字符要使用双引号
     反斜杠的另一种作用，就是当反斜杠用于一行的最后一个字符时，Shell把行尾的反斜杠作为续行，这种结构在分几行输入长命令时经常使用。
     ```
+
   - 花括号扩展不能被引用，否则花括号扩展不会被触发
   - 命令执行会前删除引用
 
 - 命令替换（扩展之一）
   > 将扩展部分的命令执行完后，将结果放在扩展部分
   - ``
-  - $()
-  - $(< file)
+  - \$()
+  - \$(< file)
   ```shell
   lines=`ls -l | wc -l`
   lines=$(ls -l | wc -l)
@@ -735,34 +764,39 @@
 ## 6.5. 退出状态&逻辑判断
 
 - 退出状态：
-  - echo $?
+  - echo \$?
 - 逻辑判断
+
   > man bash 控制操作符 算术求值,
+
   - command1||commond2
   - commond1&&commond2
-  ```shell
-  控制操作符 && 和 ││ 分别代表 AND 和 OR 序列。一个 AND 序列的形式是
-        command1 && command2
-  command2 只有在 command1 返回 0 时才被执行。
-  例：
-  ls / && echo ok
-  make && make install
 
-  一个 OR 序列的形式是
-        command1 ││ command2
-  command2 只有在 command1 返回非 0 状态时才被执行。AND 和 OR 序列的返回状态是序列中最
-  后执行的命令的返回状态。
+  ```shell
+    控制操作符 && 和 ││ 分别代表 AND 和 OR 序列。一个 AND 序列的形式是
+            command1 && command2
+    command2 只有在 command1 返回 0 时才被执行。
+    例：
+    ls / && echo ok
+    make && make install
+
+    一个 OR 序列的形式是
+            command1 ││ command2
+    command2 只有在 command1 返回非 0 状态时才被执行。AND 和 OR 序列的返回状态是序列中最
+    后执行的命令的返回状态。
   ```
 
 ## 6.6. 表达式
 
-> man bash shell语法>表达式
+> man bash shell 语法>表达式
 
 - 算术表达式
+
   - 结构
     - $var1+$var2
-    - $((var1+var2))
-      > **$只是取值，主要是双小括号**
+    - \$((var1+var2))
+      > **\$只是取值，主要是双小括号**
+
   ```shell
   a=1 # 再次提醒，不能随便加空格
   b=2
@@ -783,10 +817,9 @@
   # 因此中括号和表达式必须要用空格分开
   ```
 
-
 ## 6.7. 流程控制
 
-> **全部通过help进行学习**
+> **全部通过 help 进行学习**
 
 - if
   ```shell
@@ -803,16 +836,17 @@
   while ls ~/god &>/dev/null;do echo 'has /god'; rm -fr ~/god;done
   ```
 - case
+
   ```shell
 
   ```
 
 ## 6.8. 练习
 
-- shell编程一切皆命令
-- 习惯通过 $? 进行逻辑判断
+- shell 编程一切皆命令
+- 习惯通过 \$? 进行逻辑判断
 - 不要逻辑或逻辑与混着用，否则容易混,出现歧义
-- 命令扩展后，会讲结果进行词的拆分。 echo $IFS 查看。默认是空格和换行符
+- 命令扩展后，会讲结果进行词的拆分。 echo \$IFS 查看。默认是空格和换行符
 
 ```shell
 # 写一个脚本
@@ -858,7 +892,6 @@ $IFS=oldIFS
 echo 'file not find'
 exit 2
 ```
-
 
 ```shell
 # 循环遍历文件每一行，定义一个计时器num，打印num正好是文件行数.
@@ -920,16 +953,16 @@ echo $num
 }
 ```
 
-## 七个扩展
+## 6.9. 七个扩展
 
-> man bash 吧，所有都在man bash
+> man bash 吧，所有都在 man bash
 
-- 1，花括号  mkdir  -p sdfsdf/{a,b,c}sdfsdf
+- 1，花括号 mkdir -p sdfsdf/{a,b,c}sdfsdf
 - 2，波浪线 cd ~god
-- 3，变量&参数  $  $$  ${}(.....)
+- 3，变量&参数 $  $$  ${}(.....)
 - 4，命令替换 ls -l `echo $path`
-- 5，算术扩展  num=$((3+4))
-- 6，word拆分，$IFS
-- 7，路径  *（零到多个任意字符）？
-- 8，引用删除   echo "hello"
-- *，重定向  >  
+- 5，算术扩展 num=\$((3+4))
+- 6，word 拆分，\$IFS
+- 7，路径 \*（零到多个任意字符）？
+- 8，引用删除 echo "hello"
+- \*，重定向 >
