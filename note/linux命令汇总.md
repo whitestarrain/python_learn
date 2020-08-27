@@ -1,4 +1,31 @@
-# 1. 开始
+# 1. 常用命令
+
+|          |           |         |               |          |
+| :------: | :-------: | :-----: | :-----------: | :------: |
+|   man    |   help    |         |               |          |
+|    ls    |    cd     |  touch  |      rm       |  mkdir   |
+|    cp    |    mv     |   cat   |     more      |   less   |
+|   tree   |   stat    |  grep   |               |          |
+|   head   |   tail    |         |               |          |
+| poweroff | shutdown  |  exit   |               |          |
+|   ping   | ifconfig  |  wget   | netstat -natp | route -n |
+|  arp -a  |           |         |               |          |
+|  sleep   |           |         |               |          |
+|   ssh    |    scp    |         |               |          |
+|   type   |   which   | whereis |    locate     |   type   |
+|   file   |           |         |               |          |
+|  passwd  |  usermod  |  chown  |     chgrp     |  chmod   |
+| groupadd |    su     |  sudo   |               |          |
+|   who    |   users   |         |               |          |
+|   date   |    cal    |   df    |      du       |    ps    |
+|   top    |   kill    |   ln    |    pstree     |   free   |
+|  mount   | chkconfig |         |               |
+|   rpm    |    yum    |   tar   |      apt      |   make   |
+|   cut    |   sort    |   wc    |      sed      |   awk    |
+|   read   |   test    |  exec   |    source     |   bash   |
+|   echo   |   hash    |         |               |          |
+
+# 2. 开始
 
 > 虚拟机集群的步骤看 ppt
 
@@ -8,12 +35,14 @@
   - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
   - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
 - file
+  - `ELF` 类型为二进制可执行程序
 - echo 返回输入变量
   > echo \$PATH
 - 环境变量
   - windows 中用两个%取环境变量的值，用;分割
   - linux 中用\$取值，用:分割
   - %path% == \$PATH
+  - 修改 profile 可以修改环境变量，具体再学完 shell script 后就理解了
 - yum install man man-pages
   > man 是帮助程序 man-pages 是扩充的帮助页<br>
   > 也可以 `man ascii` `man utf-8`<br>
@@ -33,9 +62,12 @@
   - 1 正确的输出流
   - 2 错误的输出流
 
+- `!serv` 执行最近的，以serv开头的，执行过的命令
+- jps ：jdk中的一个可执行程序，查看java进程id
+
 ---
 
-# 2. 目录相关
+# 3. 目录相关
 
 - 目录
 
@@ -111,6 +143,7 @@
     - Inode 磁盘位置索引
   - touch
     - 更新指定已有文件元数据的三个时间
+      - 可以
     - 创建新文件
 
 - cat
@@ -119,6 +152,7 @@
 - head 显示最前面的内容，-4 表示显示四行
 - tail 显示最后面的内容，-4 表示显示四行
   > head -4 file | tail -1 显示第四行
+  - tail -f file 阻塞显示文件
 - 管道：
 
   - cat file | more 可以分屏显示内容
@@ -147,7 +181,7 @@
 
 ---
 
-# 3. 文本处理
+# 4. 文本处理
 
 - cut：切割行。比如查看数据库表数据时
 
@@ -177,7 +211,9 @@
   - 其他统计用 man 查一下吧
 
 - sed :行编辑器
+
   > 类似 vi 的末行模式,只会显示修改后的内容，要加 i 选项才能保存到文件中
+
   - 选项
     - sed [options] `AddressCommand` file
     - n 静默模式，处理而不打印出
@@ -208,7 +244,7 @@
     - `sed -n "/[0-9]/p" test.txt` 显示包含数字的行 可以由 `grep "[0-9] test.txt"代替`
     - `sed "s/3333/11111/g"` 替换
 
-* awk
+- awk
 
   - 说明:
     - awk 是一个强大的文本分析工具。
@@ -298,7 +334,7 @@
 
 ---
 
-# 4. 用户和权限
+# 5. 用户和权限
 
 > 了解逻辑，以后工作后要知道自己想要什么权限的用户。或者哪个程序的管理员，哪个程序的普通用户
 
@@ -344,7 +380,7 @@
 
 ---
 
-# 5. 软件安装
+# 6. 软件安装
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -494,10 +530,11 @@
   - yum install man-pages-zh-CN
   - 看 man bash
 
-# 6. shell script
+# 7. shell script
 
-## 6.1. 开始
+## 7.1. 开始
 
+- /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
 - 可以启动多层 bash
 
@@ -543,7 +580,7 @@
   - 函数
   - 磁盘目录下的可执行文件
 
-## 6.2. 文本流，重定向
+## 7.2. 文本流，重定向
 
 - 预先知识
 
@@ -656,7 +693,7 @@
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 6.3. 变量
+## 7.3. 变量
 
 - 种类：
   - 本地
@@ -678,12 +715,13 @@
       - $11:$1 再拼上 1
       - \${11} 取第 11 个参数
   - 特殊
+    - \$?:最近一次命令执行结果状态
     - \$#:参数个数
     - \$\*:参数列表
     - \$@:参数列表
     - $$
       $$
-    - \$BASHPI:当前 shell 进程 id
+    - \$BASHPI:当前进程 id
       > 区别：echo $$ | more 会显示当前bash的进程id，因为$$优先级大于管道，会优先替换\$$，再执行管道 <br>
       > echo $BASHPID | more 会显示管道左侧开启 bash 的进程 id，因为$BASKPID优先级小于管道，会执行管道，在进行$BASHPID 的替换<br>
       > 见下面
@@ -706,7 +744,7 @@
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 6.4. 引用&命令替换
+## 7.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -752,7 +790,7 @@
 
 - 命令替换（扩展之一）
   > 将扩展部分的命令执行完后，将结果放在扩展部分
-  - ``
+  - `script code`
   - \$()
   - \$(< file)
   ```shell
@@ -761,7 +799,7 @@
   lines=$(< scriptfile)
   ```
 
-## 6.5. 退出状态&逻辑判断
+## 7.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -786,7 +824,7 @@
     后执行的命令的返回状态。
   ```
 
-## 6.6. 表达式
+## 7.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -817,7 +855,7 @@
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 6.7. 流程控制
+## 7.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -841,7 +879,7 @@
 
   ```
 
-## 6.8. 练习
+## 7.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 \$? 进行逻辑判断
@@ -953,7 +991,7 @@ echo $num
 }
 ```
 
-## 6.9. 七个扩展
+## 7.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
