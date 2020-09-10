@@ -861,7 +861,7 @@ ctrl - :缩小终端窗口的字体显示
     - 同时不是通过轮训的方式，而是以事件通知的方式哪个socket的数据到了，哪个就运行，类似 事件
     - [参考博客](https://blog.csdn.net/xiajun07061225/article/details/9250579)
     - 图片：
-        > ![]("./image/epoll.jpg")
+        > ![](./image/epoll.jpg)
 - 服务器速度： 多进程<多线程<协程<单进程,线程非阻塞<<epoll
 
 - cmd中 arp -a 查看arp协议中ip与mac映射
@@ -879,6 +879,7 @@ ctrl - :缩小终端窗口的字体显示
     - GIL解决方式：
         - 换python解释器
         - 用其他语言来写线程中要执行的函数（python可以调用java，cc++，js等语言。比如python可以通过c编译出的.so文件来调用c语言里的函数）
+    - 额外：numpy没有gil锁，是它速度快的原因之一
 
 - 深拷贝，浅拷贝
     - 只看一层：
