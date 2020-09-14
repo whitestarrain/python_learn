@@ -1,0 +1,36 @@
+{
+  "load_extensions": {
+    "nbextensions_configurator/config_menu/main": true,
+    "contrib_nbextensions_help_item/main": true,
+    "jupyter-js-widgets/extension": true,
+    "code_prettify/autopep8": true,
+    "scratchpad/main": false,
+    "codefolding/main": true,
+    "jupyter-autopep8-master/jupyter-autopep8": false,
+    "jupyter-vim-binding-master/vim_binding": true,
+    "skip-traceback/main": true
+  },
+  "code_format_hotkey": "shift-=",
+  "autopep8": {
+    "add_toolbar_button": true
+  },
+  "Cell": {
+    "cm_config": {
+      "lineNumbers": true
+    }
+  },
+  "skip-traceback": {
+    "enable": true
+  },
+  "keys": {
+    "command": {
+      "bind": {
+        "ctrl-9": "auto:scratchpad-execute",
+        "ctrl-0": "auto:scratchpad-toggle",
+        "m,m": "jupyter-notebook:change-cell-to-markdown",
+        "m,c": "jupyter-notebook:change-cell-to-code",
+        "m,r": "jupyter-notebook:change-cell-to-raw"
+      }
+    }
+  }
+}
