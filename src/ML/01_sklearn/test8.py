@@ -1,4 +1,6 @@
 from sklearn.decomposition import PCA
+import numpy as np
+import pandas as pd
 
 def test():
     pass
@@ -11,4 +13,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    test()

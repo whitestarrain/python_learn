@@ -1,0 +1,17 @@
+conda env create -f learn.yaml
+# 创建环境
+
+jt  .....  # 设置主题
+
+# 注意：jupyter 本身就有插件加载程序 nbextension
+
+jupyter nbextension list  (查看开着什么插件)
+
+# 没开启的话
+jupyter nbextension enable  命令开启 jupyter-js-widgets
+
+jupyter nbextension install vim那个压缩包
+# 之后会告诉解压到那里，去改名为 vim_binding
+
+# 然后
+jupyter nbextension enable vim_binding/vim_binding
