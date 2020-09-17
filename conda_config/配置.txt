@@ -15,3 +15,9 @@ jupyter nbextension install vim那个压缩包
 
 # 然后
 jupyter nbextension enable vim_binding/vim_binding
+
+# jupyter_contrib_nbextensions 里的插件安装：
+1. 把代码下载下来。
+2. 把目标插件打成zip包
+3.使用jupyter nbextension 命令安装
+4.使用jupyter nbextension 命令启动
