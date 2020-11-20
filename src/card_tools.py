@@ -7,7 +7,6 @@ data = [{
     'password': 'password2',
 }]
 
-
 def start_output():
     """开始界面 
     """

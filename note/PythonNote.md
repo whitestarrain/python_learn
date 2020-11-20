@@ -887,7 +887,7 @@ ctrl - :缩小终端窗口的字体显示
         - 而python中只会复制引用，称为浅拷贝
         - python的copy模块下有deepcopy函数来完成深拷贝，会将数据复制一份
     - copy与deepcopy区别
-        > ![]("./image/deepcopy.jpg")
+        > ![](./image/deepcopy.jpg)
         - 简单解释
             - copy只会深拷贝第一层，剩下的浅拷贝(上面那个拷贝e)
             - deepcopy深拷贝所有，递归深拷贝（下面那个拷贝的e）

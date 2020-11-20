@@ -1,3 +1,6 @@
 .pytest_cache
 __pycache__
 data
+*.mp4
+jupyter/__study
+jupyter/*/data
