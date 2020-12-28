@@ -4,3 +4,4 @@ data
 *.mp4
 jupyter/__study
 jupyter/*/data
+*/temp

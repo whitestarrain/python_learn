@@ -1,7 +1,4 @@
-import os
+import torch
 
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
+print(torch.__version__)
+print(torch.cuda.is_available())
